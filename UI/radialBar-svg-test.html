@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		svg {
+			display: block;
+			width: 150px;
+			height: 150px;
+			margin: 0 auto;
+		}
+		svg circle {
+			stroke-dashoffset: 0;
+			transition: stroke-dashoffset .5s linear;
+			stroke-width: 10;
+			stroke: grey;
+		}
+		svg .bar-track {
+			stroke: #888;
+			fill: none;
+		}
+		svg .bar {
+			stroke: #FF9F1E;
+			fill: none;
+			transform: rotate(-90deg);
+			transform-origin: 50% 50%;
+		}
+		.rad-overlay {
+			stroke: none;
+			fill: #444;
+		}
+		svg text {
+			font-family: "Segoe UI Light", "Frutiger", "FrutigArial", sans-serif;
+			fill: white;
+		}
+	</style>
+	<script type="text/javascript">
+		window.onload = function() {
+			var pie = document.getElementById("bar");
+			var rad = pie.getAttribute("r");
+			var cir = 2*Math.PI*rad;
+			pie.style.strokeDasharray = (cir);
+
+			function setfill(percent){
+				pie.style.strokeDashoffset = (1-percent)*cir;
+			}
+
+			setfill(Math.random());
+		};
+	</script>
+</head>
+<body>
+	<svg class="radial-progressbar" viewBox="0 0 150 150" preserveAspectRatio="xMidYMid slice">
+		<circle class="bar-track" r="60" cx="75" cy="75"></circle>
+		<circle id="bar" class="bar" r="60" cx="75" cy="75"></circle>
+		<circle class="rad-overlay" r="58" cx="75" cy="75"></circle>
+		<text x="50%" y="50%" text-anchor="middle" dy=".3em">32%</text>
+	</svg>
+</body>
+</html>

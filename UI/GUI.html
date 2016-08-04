@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="text/javascript" src="noUiSlider/nouislider.min.js"></script>
+	<script type="text/javascript" src="radialBar.js"></script>
+	<script type="text/javascript">
+
+		function parseTime(value) {
+			if(value.indexOf(":") < 0) {
+				alert("Please input a time in the format hh:mm");
+				return null;
+			}
+			var value = value.split(":");
+			value = parseInt(value[0]) + parseInt(value[1])/60;
+			return value;
+		};
+		function formatMinFromDec(mindec) {
+			var minutes = (60*(mindec/100)).toString().substring(0,2);
+			minutes = (minutes.length < 2) ? "0"+minutes : minutes;
+			return minutes;
+		};
+		function decToTime(value) {
+			var value = value.toString().split(".");
+			
+			value[1] = (60*(parseInt(value[1])/100));
+			value[1] = (value[1] < 10) ? 
+			"0"+value[1].toString().substring(0,1) : 
+			value[1].toString().substring(0,2);
+			
+			return value[0] + ":" + value[1];
+		};
+		function changeOverrideStatus(element) {
+			if(element.className.indexOf("active") < 0) {
+				element.className += " active";
+				element.innerHTML = "ON, PRESS TO ABORT";
+			}
+			else {
+				element.className = "button override";
+				element.innerHTML = "RUN NOW";
+			}
+		};
+
+		window.onload = (function() {
+
+			var LightStart = document.getElementById("LightStart");
+			var LightDuration = document.getElementById("LightDuration");
+			var LightEnd = document.getElementById("LightEnd");
+
+
+			var LightSlider = document.getElementById('LightSlider');
+			noUiSlider.create(LightSlider, {
+				start: [ 3, 21 ],
+				range: {
+					'min': [  0 ],
+					'max': [ 24 ]
+				},
+				step: 0.25,
+				behaviour: 'drag',
+				connect: true
+			});
+			LightSlider.noUiSlider.on('update', function(values, handle) {
+				
+				var value = decToTime(values[handle]);
+
+				if(handle) {
+					LightEnd.value = value;
+				}
+				else {
+					LightStart.value = value;
+				}
+
+				LightDuration.innerHTML = decToTime((values[1] - values[0]).toFixed(2));
+			});			
+			LightStart.addEventListener("change", function() {
+				var value = parseTime(this.value);
+				LightSlider.noUiSlider.set([value, null]);
+			});
+			LightEnd.addEventListener("change", function() {
+				var value = parseTime(this.value);
+				LightSlider.noUiSlider.set([null, value]);
+			});
+
+
+			var FanDuration = document.getElementById("FanDuration");
+			var FanUptime = document.getElementById("FanUptime");
+			var FanInterval = document.getElementById("FanInterval");
+
+			var FanSlider = document.getElementById('FanSlider');
+			noUiSlider.create(FanSlider, {
+				start: [ 6 ],
+				range: {
+					'min': [  0 ],
+					'max': [ 24 ]
+				},
+				step: 0.5
+			});
+			FanSlider.noUiSlider.on('update', function(values, handle) {
+				FanUptime.innerHTML = decToTime(
+					(24/values[handle] * parseTime(FanDuration.value)).toFixed(2)
+					);
+
+				var value = decToTime(values[handle]);
+				FanInterval.value = value;
+			});
+
+			FanDuration.addEventListener("change", function() {
+				var value = parseTime(this.value);
+				FanUptime.innerHTML = decToTime(
+					(24/FanSlider.noUiSlider.get() * parseTime(FanDuration.value)).toFixed(2)
+					);
+			});
+			FanInterval.addEventListener("change", function() {
+				var value = parseTime(this.value);
+				FanSlider.noUiSlider.set(value);
+			});
+
+			setRadialBar("waterbar", .62);
+			setRadialBar("tempbar", .22, "&#0176; C");
+
+			document.getElementById("FanOverride").addEventListener("click", function() {
+				changeOverrideStatus(this);
+			});
+			document.getElementById("WaterOverride").addEventListener("click", function() {
+				changeOverrideStatus(this);
+			});
+		});
+
+	</script>
+	<link rel="stylesheet" type="text/css" href="noUiSlider/nouislider.min.css">
+	<link rel="stylesheet" type="text/css" href="radialBar.css">
+	<style>
+		body {
+			font-family: "Segoe UI Light", "Frutiger", "FrutigArial", sans-serif;
+			color: #eee;
+			background-color: rgb(19,19,19);
+		}
+
+		.noUi-horizontal .noUi-handle{
+			border-radius:0px;
+			box-shadow: none;
+			border:none;
+			left:-6px;
+			width:12px;
+			height: 29px;
+			top:-5px;
+		}
+		.noUi-handle::before, .noUi-handle::after{
+			display:none;
+		}
+		.noUi-target{
+			border-radius: 0px;
+			border:none;
+			box-shadow: none;
+		}
+		.noUi-origin {
+			background-color: rgb(40,40,40);
+			border-radius: 0px;
+		}
+		.noUi-connect{
+			box-shadow: none;
+			background-color: #ffeb3b;
+		}
+		.noUi-background{
+			background-color:rgb(40,40,40);
+			box-shadow: none;
+			border-radius: 0px;
+		}
+		#FanSlider {
+			background-color: #00ff00;
+		}
+		.slider {
+			width: 100%;
+			min-width: 300px;
+			margin-bottom: 1em;
+		}
+		.orange {
+			background-color: orange;
+		}
+
+		.flex-wrapper {
+			display: flex;
+			justify-content: space-around;
+			flex-wrap: wrap;
+		}
+
+		.datablock-wrapper {
+			box-sizing: border-box;
+			min-width: 33%;
+			padding: 1em;
+			float: left;
+			border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+		}
+		.set-title {
+			font-weight: 400;
+			margin: 0.5em 0;
+		}
+		.data-wrapper {
+			display: flex;
+			justify-content: space-around;
+		}
+		.data-unit {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.data-name, .data-value {
+			display: inline-block;
+		}
+		.data-name {
+			font-size: 0.75em;
+			text-align: center;
+			margin: 0 0.5em;
+		}
+		.data-value {
+			padding: 0.25em 1.5em;
+			margin: 0.25em 0.25em;
+			text-align: center;
+			background-color: #333;
+		}
+		input.text {
+			/*padding: 4px 0px 4px 14px;*/
+			font-family: "Segoe UI Light", "Frutiger", "FrutigArial", sans-serif;
+			font-size: inherit;
+			color: #eee;
+			max-width: 3em;
+			border: none;
+			padding: 0.25em 1.5em;
+			margin: 0.25em 0.25em;
+			text-align: center;
+			background-color: #555;
+		}
+		a.button {
+			padding: 0.25em 1.5em;
+			margin: 0.25em 0.25em;
+			text-align: center;
+			text-decoration: none;
+			color: #eee;
+			background-color: #333;
+		}
+		a.override {
+			background-color: #358c44;
+		}
+		a.override.active {
+			background-color: #9f2b2e;
+		}
+
+		.sidebar-wrapper {
+			background-color: #555;
+			padding: 0.5em 1em;
+			float: right;
+		}
+		.sidebar-wrapper .data-value {
+			background-color: #2b2b2b;
+			width: 4em;
+		}
+		.on, .sidebar-wrapper .on {
+			background-color: #358c44;
+		}
+		.off, .sidebar-wrapper .off {
+			background-color: #9f2b2e;
+		}
+
+		.col-1 {width: 8.33%;}
+		.col-2 {width: 16.66%;}
+		.col-3 {width: 25%;}
+		.col-4 {width: 33.33%;}
+		.col-5 {width: 41.66%;}
+		.col-6 {width: 50%;}
+		.col-7 {width: 58.33%;}
+		.col-8 {width: 66.66%;}
+		.col-9 {width: 75%;}
+		.col-10 {width: 83.33%;}
+		.col-11 {width: 91.66%;}
+		.col-12 {width: 100%;}
+		[class*="col-"] {
+			box-sizing: border-box;
+			float: left;
+			padding: 5px;
+			//border: 1px solid red;
+		}
+		.row::after {
+			content: "";
+			clear: both;
+			display: block;
+		}
+		@media only screen and (max-width: 768px) {
+			/* For mobile phones: */
+			[class*="col-"] {
+				width: 100%;
+			}
+			.datablock-wrapper {
+				width: 100%;
+			}
+			.sidebar-wrapper {
+				float: none;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="row">
+		<div class="col-8">
+
+			<div class="flex-wrapper">
+
+				<div class="datablock-wrapper">
+					<h2 class="set-title">LIGHTING SCHEDULE</h2>
+					<div id="LightSlider" class="slider"></div>
+					<div class="data-wrapper">
+						<div class="data-unit">
+							<span class="data-name">START TIME</span>
+							<input id="LightStart" type="text" class="text" value="3:00">
+						</div>
+						<div class="data-unit">
+							<span class="data-name">DURATION</span>
+							<span id="LightDuration" class="data-value">03:00</span>
+						</div>
+						<div class="data-unit">
+							<span class="data-name">END TIME</span>
+							<input id="LightEnd" type="text" class="text" value="21:00">
+						</div>
+					</div>
+				</div>
+
+				<div class="datablock-wrapper">
+					<h2 class="set-title">FAN SCHEDULE</h2>
+					<div id="FanSlider" class="slider"></div>
+					<div class="data-wrapper">
+						<div class="data-unit">
+							<span class="data-name">ON-TIME PER INTERVAL</span>
+							<input id="FanDuration" type="text" class="text" value="0:05">
+						</div>
+						<div class="data-unit">
+							<span class="data-name">TOTAL ON-TIME PER DAY</span>
+							<span id="FanUptime" class="data-value">03:00</span>
+						</div>
+						<div class="data-unit">
+							<span class="data-name">LENGTH OF INTERVALS</span>
+							<input id="FanInterval" type="text" class="text" value="6:00">
+						</div>
+					</div>
+					<div class="data-unit">
+						<span class="data-name">MANUAL OVERRIDE</span>
+						<a id="FanOverride" href="#" class="button override">RUN NOW</a>
+					</div>
+				</div>
+
+				<div class="datablock-wrapper">
+					<h2 class="set-title">WATER RESERVOIR</h2>
+					<svg id="waterbar" class="radial-progressbar" viewBox="0 0 150 150" preserveAspectRatio="xMidYMid slice">
+						<circle class="bar-track" r="60" cx="75" cy="75"></circle>
+						<circle id="bar" class="bar blue" r="60" cx="75" cy="75"></circle>
+						<circle class="rad-overlay" r="58" cx="75" cy="75"></circle>
+						<text x="50%" y="50%" text-anchor="middle" dy=".3em">32%</text>
+					</svg>
+					<div class="data-wrapper">
+						<div class="data-unit">
+							<span class="data-name">REMAINING</span>
+							<span class="data-value">3.14 L</span>
+						</div>
+						<div class="data-unit">
+							<span class="data-name">NEXT WATERING</span>
+							<span class="data-value">-01:45</span>
+						</div>
+					</div>
+					<div class="data-unit">
+						<span class="data-name">MANUAL OVERRIDE</span>
+						<a id="WaterOverride" href="#" class="button override">RUN NOW</a>
+					</div>
+				</div>
+
+				<div class="datablock-wrapper">
+					<h2 class="set-title">CLIMATE CONTROL</h2>
+					<svg id="tempbar" class="radial-progressbar" viewBox="0 0 150 150" preserveAspectRatio="xMidYMid slice">
+						<circle class="bar-track" r="60" cx="75" cy="75"></circle>
+						<circle id="bar" class="bar orange" r="60" cx="75" cy="75"></circle>
+						<circle class="rad-overlay" r="58" cx="75" cy="75"></circle>
+						<text x="50%" y="50%" text-anchor="middle" dy=".3em">32%</text>
+					</svg>
+					<div class="data-wrapper">
+						<div class="data-unit">
+							<span class="data-name">CURRENT TEMP</span>
+							<span class="data-value">22&#0176; C</span>
+						</div>
+						<div class="data-unit">
+							<span class="data-name">AVG. DAY TEMP</span>
+							<span class="data-value">23&#0176; C</span>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="col-4">
+
+			<div class="sidebar-wrapper">
+				<h3 class="set-title">LIVE LIGHTING UPDATES</h3>
+				<span class="data-value">3.15</span>
+				<span class="data-name">CURRENT DAILY EXPOSURE</span>
+				<br />
+				<span class="data-value">14.15</span>
+				<span class="data-name">REMAINING DAILY EXPOSURE</span>
+				<br />
+				<span class="data-value">143.0</span>
+				<span class="data-name">CURRENT WEEKLY EXPOSURE</span>
+				<br />
+				<span class="data-value on">ON</span>
+				<span class="data-name">CURRENT DEVICE STATUS</span>
+
+				<h3 class="set-title">LIVE WATERING UPDATES</h3>
+				<span class="data-value">19%</span>
+				<span class="data-name">CURRENT MOISTURE</span>
+				<br />
+				<span class="data-value">7.30</span>
+				<span class="data-name">TIME TO NEXT WATERING</span>
+				<br />
+				<span class="data-value">4.55</span>
+				<span class="data-name">TIME SINCE LAST WATERING</span>
+				<br />
+				<span class="data-value">0.43 GAL</span>
+				<span class="data-name">CURRENT DAILY USAGE</span>
+				<br />
+				<span class="data-value">2.15 GAL</span>
+				<span class="data-name">CURRENT WEEKLY USAGE</span>
+				<br />
+				<span class="data-value on">ON</span>
+				<span class="data-name">CURRENT DEVICE STATUS</span>
+				
+				<h3 class="set-title">LIVE FAN UPDATES</h3>
+				<span class="data-value">22&#0176; C</span>
+				<span class="data-name">CURRENT TEMPERATURE</span>
+				<br />
+				<span class="data-value">6%</span>
+				<span class="data-name">CURRENT HUMIDITY</span>
+				<br />
+				<span class="data-value">0.02</span>
+				<span class="data-name">CURRENT DAILY USAGE</span>
+				<br />
+				<span class="data-value">0.07</span>
+				<span class="data-name">CURRENT WEEKLY USAGE</span>
+				<br />
+				<span class="data-value off">OFF</span>
+				<span class="data-name">CURRENT DEVICE STATUS</span>
+				<br />
+			</div>
+
+		</div>
+	</div>
+
+</body>
+</html>

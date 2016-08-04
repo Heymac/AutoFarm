@@ -1,0 +1,43 @@
+svg {
+	display: block;
+	width: 150px;
+	height: 150px;
+	margin: 0 auto;
+}
+
+svg circle {
+	stroke-dashoffset: 0;
+	transition: stroke-dashoffset .5s linear;
+	stroke-width: 10;
+	stroke: grey;
+}
+
+svg .bar-track {
+	stroke: #888;
+	fill: none;
+}
+
+svg .bar {
+	stroke: orange;
+	fill: none;
+	transform: rotate(-90deg);
+	transform-origin: 50% 50%;
+}
+
+svg .bar.blue {
+	stroke: paleturquoise;
+}
+
+svg .bar.orange {
+	stroke: orange;
+}
+
+.rad-overlay {
+	stroke: none;
+	fill: none;
+}
+
+svg text {
+	font-family: "Segoe UI Light", "Frutiger", "FrutigArial", sans-serif;
+	fill: white;
+}
