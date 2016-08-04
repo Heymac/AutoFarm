@@ -189,10 +189,10 @@
 			box-sizing: border-box;
 			min-width: 33%;
 			padding: 1em;
-			float: left;
 			border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 		}
 		.set-title {
+			font-size: 1.3em;
 			font-weight: 400;
 			margin: 0.5em 0;
 		}
@@ -214,13 +214,13 @@
 			margin: 0 0.5em;
 		}
 		.data-value {
+			min-width: 3em;
 			padding: 0.25em 1.5em;
 			margin: 0.25em 0.25em;
 			text-align: center;
 			background-color: #333;
 		}
 		input.text {
-			/*padding: 4px 0px 4px 14px;*/
 			font-family: "Segoe UI Light", "Frutiger", "FrutigArial", sans-serif;
 			font-size: inherit;
 			color: #eee;
@@ -244,6 +244,30 @@
 		}
 		a.override.active {
 			background-color: #9f2b2e;
+		}
+
+		.harvest-wrapper {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+			flex-wrap: wrap;
+		}
+		.harvest-wrapper .data-value {
+			padding: 0.25em 1.5em;
+		}
+		.harvest-title {
+			font-size: 1em;
+			flex: 2;
+			margin: 0.3em 0;
+		}
+		.harvest-bar {
+			width: 100%;
+			height: 5px;
+			background-color: #282828;
+		}
+		.harvest-bar.fill {
+			width: 40%;
+			background-color: #358c44;
 		}
 
 		.sidebar-wrapper {
@@ -301,7 +325,7 @@
 </head>
 <body>
 	<div class="row">
-		<div class="col-8">
+		<div class="col-6">
 
 			<div class="flex-wrapper">
 
@@ -395,7 +419,54 @@
 
 		</div>
 
-		<div class="col-4">
+		<div class="col-3">
+			
+			<div class="datablock-wrapper">
+				<div class="harvest-wrapper">
+					<span class="harvest-title">POT 1</span>
+					<div class="data-unit">
+						<span class="data-name">TYPE</span>
+						<span class="data-value">BASIL</span>
+					</div>
+					<div class="data-unit">
+						<span class="data-name">DAY</span>
+						<span class="data-value">69</span>
+					</div>
+				</div>
+				<div class="harvest-bar"><div class="harvest-bar fill"></div></div>
+			</div>
+			<div class="datablock-wrapper">
+				<div class="harvest-wrapper">
+					<span class="harvest-title">POT 2</span>
+					<div class="data-unit">
+						<span class="data-name">TYPE</span>
+						<span class="data-value">MINT</span>
+					</div>
+					<div class="data-unit">
+						<span class="data-name">DAY</span>
+						<span class="data-value">69</span>
+					</div>
+				</div>
+				<div class="harvest-bar"><div class="harvest-bar fill"></div></div>
+			</div>
+			<div class="datablock-wrapper">
+				<div class="harvest-wrapper">
+					<span class="harvest-title">POT 3</span>
+					<div class="data-unit">
+						<span class="data-name">TYPE</span>
+						<span class="data-value">SWEET PEA</span>
+					</div>
+					<div class="data-unit">
+						<span class="data-name">DAY</span>
+						<span class="data-value">69</span>
+					</div>
+				</div>
+				<div class="harvest-bar"><div class="harvest-bar fill"></div></div>
+			</div>
+
+		</div>
+
+		<div class="col-3">
 
 			<div class="sidebar-wrapper">
 				<h3 class="set-title">LIVE LIGHTING UPDATES</h3>
